@@ -89,7 +89,15 @@ function handleItemCheckClicked() {
 function handleDeleteItemClicked() {
   // this function will be responsible for when users want to delete a shopping list
   // item
-  console.log('`handleDeleteItemClicked` ran')
+  // remove item from STORE using index
+  // re - render
+
+$('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
+  const myId = $(e.currentTarget).closest('li').attr('id');
+  STORE.splice(myId, 1);
+  renderShoppingList()
+})
+  console.log('completed delete');
 }
 
 // this function will be our callback when the page loads. it's responsible for
@@ -100,7 +108,7 @@ function handleShoppingList() {
   renderShoppingList();
   // handleNewItemSubmit();
   handleItemCheckClicked();
-  // handleDeleteItemClicked();
+  handleDeleteItemClicked();
 
 }
 
