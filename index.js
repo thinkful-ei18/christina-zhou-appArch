@@ -48,10 +48,10 @@ function renderShoppingList() {
 function generateItem(item, index) {
   //Get item from STORE
   //Generate <li>
-  const itemClassCheck = item.checked ? 'shopping-item__checked' : '';
+  const itemClassCheck = item.checked ? 'shopping-item__checked' : ' ';
   const newItem = item.name;
   return `
-    <li data-index = '${index}'>
+    <li id='${index}'>
       <span class="shopping-item ${itemClassCheck}">${newItem}</span>
         <div class="shopping-item-controls">
           <button class="shopping-item-toggle">
@@ -74,8 +74,16 @@ function handleNewItemSubmit() {
 function handleItemCheckClicked() {
   // this function will be reponsible for when users click the "check" button on
   // a shopping list item.
+  $('ul.js-shopping-list').on('click','.shopping-item-toggle', e=> {
+    const myId = $(e.currentTarget).closest('li').attr('id')
+    STORE[myId].checked = STORE[myId].checked === true? false : true
+    renderShoppingList()
+  })
+  
   console.log('`handleItemCheckClicked` ran');
 }
+
+
 
 
 function handleDeleteItemClicked() {
@@ -90,9 +98,9 @@ function handleDeleteItemClicked() {
 // for individual shopping list items.
 function handleShoppingList() {
   renderShoppingList();
-  handleNewItemSubmit();
+  // handleNewItemSubmit();
   handleItemCheckClicked();
-  handleDeleteItemClicked();
+  // handleDeleteItemClicked();
 
 }
 
