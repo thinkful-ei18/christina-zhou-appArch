@@ -26,8 +26,6 @@ const STORE = [{
     checked: false
   }
 ];
-
-
 function renderShoppingList() {
   // this function will be repsonsible for rendering the shopping list in
   // the DOM
@@ -36,8 +34,6 @@ function renderShoppingList() {
   });
   $('ul.shopping-list').html(itemLists);
 }
-
-
 
 /**
  * 
@@ -64,10 +60,21 @@ function generateItem(item, index) {
     </li>`
 }
 
-
 function handleNewItemSubmit() {
   // this function will be responsible for when users add a new shopping list item
-  console.log('`handleNewItemSubmit` ran');
+  //fetch data from input
+  //store into our STORE object
+  //re-render DOM
+  $("#js-shopping-list-form").submit(e => {
+    e.preventDefault()
+    const newItem = {}
+    newItem.name = $(".js-shopping-list-entry").val()
+    newItem.checked = false
+    STORE.push(newItem)
+    renderShoppingList();
+
+  })
+  console.log(`handle newinput`);
 }
 
 
@@ -83,9 +90,6 @@ function handleItemCheckClicked() {
   console.log('`handleItemCheckClicked` ran');
 }
 
-
-
-
 function handleDeleteItemClicked() {
   // this function will be responsible for when users want to delete a shopping list
   // item
@@ -96,8 +100,9 @@ $('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
   const myId = $(e.currentTarget).closest('li').attr('id');
   STORE.splice(myId, 1);
   renderShoppingList()
-})
   console.log('completed delete');
+})
+  console.log('handle delete');
 }
 
 // this function will be our callback when the page loads. it's responsible for
@@ -106,10 +111,9 @@ $('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
 // for individual shopping list items.
 function handleShoppingList() {
   renderShoppingList();
-  // handleNewItemSubmit();
+  handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
-
 }
 
 // when the page loads, call `handleShoppingList`
