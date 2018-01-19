@@ -79,7 +79,7 @@ function generateDynamicHtml(item) {
   const itemClassCheck = item.checked ? 'shopping-item__checked' : ' ';
   const newItem = item.name;
   if (item.isEditing) {
-    return ` <form>
+    return ` <form id = "formNewName">
     <input id = "newName" placeholder = "Rename item" autofocus></input>
     <button type="submit">Ok</button>
     <button type="button">Cancel</button>
@@ -111,7 +111,7 @@ function handleItemCheckClicked() {
   // a shopping list item.
   $('ul.js-shopping-list').on('click', '.shopping-item-toggle', e => {
     const myId = $(e.currentTarget).closest('li').attr('id');
-    STORE[myId].checked = STORE[myId].checked === true ? false : true;
+    STORE.items[myId].checked = STORE.items[myId].checked === true ? false : true;
     renderShoppingList();
   });
 
@@ -126,7 +126,7 @@ function handleDeleteItemClicked() {
 
   $('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
     const myId = $(e.currentTarget).closest('li').attr('id');
-    STORE.splice(myId, 1);
+    STORE.items.splice(myId, 1);
     renderShoppingList();
     console.log('completed delete');
   });
@@ -139,6 +139,7 @@ function handleRenameStart() {
     console.log(myId);
     STORE.items[myId].isEditing = true;
     renderShoppingList();
+    handleRenameSubmit();
   });
 }
 
@@ -146,6 +147,14 @@ function handleRenameSubmit() {
   //listern to newName submitssion
   // make change to STORE data
   //re-render
+  $('#formNewName').submit(event => {
+    event.preventDefault();
+    const newItemName = $('#newName').val();
+    const myId = $(event.target).closest('li').attr('id');
+    STORE.items[myId].name = newItemName;
+    STORE.items[myId].isEditing = false;
+    renderShoppingList();
+  });
   
   
 }
@@ -170,6 +179,7 @@ function handleShoppingList() {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleRenameStart();
+  handleRenameSubmit();
 }
 
 // when the page loads, call `handleShoppingList`
