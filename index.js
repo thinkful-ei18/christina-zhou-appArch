@@ -55,8 +55,12 @@ function generateItem(item, index) {
   //Get item from STORE
   //Generate <li>
   const newTemp = generateDynamicHtml(item);
+  let hidden = '';
+  if(STORE.hiddenSwitch && item.checked){
+    hidden = 'hidden';
+  }
   return (
-    `<li id='${index}'>
+    `<li id='${index}' ${hidden}>
           ${newTemp}
         <div class="shopping-item-controls">
           <button class="shopping-item-toggle">
@@ -155,24 +159,16 @@ function handleRenameSubmit() {
     STORE.items[myId].isEditing = false;
     renderShoppingList();
   });
-  
-  
 }
 
-// function replaceItemName() {
-//   //grab new name
-//   //change back to span
-//   //replace name in object
-//   //refresh
-//   const newItemName = $('#newName').val();
-//   $('#newName').replaceWith(`<span class="shopping-item">${newItemName}</span>`);
-//   console.log('replaced name');
-// }
+function handleToggleFilter(){
+  $('.switch').on('click','input[type=checkbox]', e =>{
+    STORE.hiddenSwitch = !STORE.hiddenSwitch;
+    renderShoppingList();
+  });
+  console.log('handle toggle');
+}
 
-// this function will be our callback when the page loads. it's responsible for
-// initially rendering the shopping list, and activating our individual functions
-// that handle new item submission and user clicks on the "check" and "delete" buttons
-// for individual shopping list items.
 function handleShoppingList() {
   renderShoppingList();
   handleNewItemSubmit();
@@ -180,6 +176,7 @@ function handleShoppingList() {
   handleDeleteItemClicked();
   handleRenameStart();
   handleRenameSubmit();
+  handleToggleFilter();
 }
 
 // when the page loads, call `handleShoppingList`
