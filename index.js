@@ -106,9 +106,7 @@ $('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
 }
 
 function editItemName () {
-  // listen for click <span class="shopping-item">apples</span>
-
-  const editText = $('<input id = "newName" placeholder = "Rename item"></input>');
+  const editText = $('<input id = "newName" placeholder = "Rename item" autofocus></input>');
   $('.shopping-item').on('click', e => {
     $(e.currentTarget).replaceWith(editText);
     $('#newName').keydown( e => {
