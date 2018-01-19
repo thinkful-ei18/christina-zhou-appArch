@@ -9,32 +9,42 @@
 // indicates if it's checked off or not.
 // we're pre-adding items to the shopping list so there's
 // something to see when the page first loads.
-const STORE = [{
-    name: "apples",
-    checked: true
+const STORE = {
+  items: [{
+    name: 'apples',
+    checked: true,
+    isEditing: false
   },
   {
-    name: "oranges",
-    checked: false
+    name: 'oranges',
+    checked: false,
+    isEditing: false
   },
   {
-    name: "milk",
-    checked: true
+    name: 'milk',
+    checked: true,
+    isEditing: false
   },
   {
-    name: "bread",
-    checked: false
+    name: 'bread',
+    checked: false,
+    isEditing: false
   }
-];
+  ],
+  searchTerm: null,
+  hiddenSwitch: false
+
+};
+
 function renderShoppingList() {
   // this function will be repsonsible for rendering the shopping list in
   // the DOM
-  const itemLists = STORE.map((item, index) => {
+  const itemLists = STORE.items.map((item, index) => {
     return generateItem(item, index);
   });
   $('ul.shopping-list').html(itemLists);
+  console.log('render');
 }
-
 /**
  * 
  * @param {object} item 
@@ -44,11 +54,10 @@ function renderShoppingList() {
 function generateItem(item, index) {
   //Get item from STORE
   //Generate <li>
-  const itemClassCheck = item.checked ? 'shopping-item__checked' : ' ';
-  const newItem = item.name;
-  return `
-    <li id='${index}'>
-      <span class="shopping-item ${itemClassCheck}">${newItem}</span>
+  const newTemp = generateDynamicHtml(item);
+  return (
+    `<li id='${index}'>
+          ${newTemp}
         <div class="shopping-item-controls">
           <button class="shopping-item-toggle">
             <span class="button-label">check</span>
@@ -56,8 +65,27 @@ function generateItem(item, index) {
           <button class="shopping-item-delete">
           <span class="button-label">delete</span>
         </button>
-      </div>
-    </li>`
+        </div>
+      </li>`
+  );
+}
+
+/**
+ * 
+ * @param {object} item
+ * @return {string} html 
+ */
+function generateDynamicHtml(item) {
+  const itemClassCheck = item.checked ? 'shopping-item__checked' : ' ';
+  const newItem = item.name;
+  if (item.isEditing) {
+    return ` <form>
+    <input id = "newName" placeholder = "Rename item" autofocus></input>
+    <button type="submit">Ok</button>
+    <button type="button">Cancel</button>
+    </form>`;
+  }
+  return `<span class="shopping-item ${itemClassCheck}">${newItem}</span>`;
 }
 
 function handleNewItemSubmit() {
@@ -65,28 +93,28 @@ function handleNewItemSubmit() {
   //fetch data from input
   //store into our STORE object
   //re-render DOM
-  $("#js-shopping-list-form").submit(e => {
-    e.preventDefault()
-    const newItem = {}
-    newItem.name = $(".js-shopping-list-entry").val()
-    newItem.checked = false
-    STORE.push(newItem)
+  $('#js-shopping-list-form').submit(e => {
+    e.preventDefault();
+    const newItem = {};
+    newItem.name = $('.js-shopping-list-entry').val();
+    newItem.checked = false;
+    STORE.item.push(newItem);
     renderShoppingList();
 
-  })
-  console.log(`handle newinput`);
+  });
+  console.log('handle newinput');
 }
 
 
 function handleItemCheckClicked() {
   // this function will be reponsible for when users click the "check" button on
   // a shopping list item.
-  $('ul.js-shopping-list').on('click','.shopping-item-toggle', e=> {
-    const myId = $(e.currentTarget).closest('li').attr('id')
-    STORE[myId].checked = STORE[myId].checked === true? false : true
-    renderShoppingList()
-  })
-  
+  $('ul.js-shopping-list').on('click', '.shopping-item-toggle', e => {
+    const myId = $(e.currentTarget).closest('li').attr('id');
+    STORE[myId].checked = STORE[myId].checked === true ? false : true;
+    renderShoppingList();
+  });
+
   console.log('`handleItemCheckClicked` ran');
 }
 
@@ -96,37 +124,41 @@ function handleDeleteItemClicked() {
   // remove item from STORE using index
   // re - render
 
-$('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
-  const myId = $(e.currentTarget).closest('li').attr('id');
-  STORE.splice(myId, 1);
-  renderShoppingList()
-  console.log('completed delete');
-})
+  $('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
+    const myId = $(e.currentTarget).closest('li').attr('id');
+    STORE.splice(myId, 1);
+    renderShoppingList();
+    console.log('completed delete');
+  });
   console.log('handle delete');
 }
 
-function editItemName () {
-  const editText = $('<input id = "newName" placeholder = "Rename item" autofocus></input>');
+function handleRenameStart() {
   $('.shopping-item').on('click', e => {
-    $(e.currentTarget).replaceWith(editText);
-    $('#newName').keydown( e => {
-      if (e.keyCode === 13) {
-        replaceItemName();
-      }
-    })
-    console.log('edited name');
-  })
+    const myId = $(e.target).closest('li').attr('id');
+    console.log(myId);
+    STORE.items[myId].isEditing = true;
+    renderShoppingList();
+  });
 }
 
-function replaceItemName () {
-  //grab new name
-  //change back to span
-  //replace name in object
-  //refresh
-  const newItemName = $('#newName').val();
-  $('#newName').replaceWith(`<span class="shopping-item">${newItemName}</span>`);
-  console.log('replaced name');
+function handleRenameSubmit() {
+  //listern to newName submitssion
+  // make change to STORE data
+  //re-render
+  
+  
 }
+
+// function replaceItemName() {
+//   //grab new name
+//   //change back to span
+//   //replace name in object
+//   //refresh
+//   const newItemName = $('#newName').val();
+//   $('#newName').replaceWith(`<span class="shopping-item">${newItemName}</span>`);
+//   console.log('replaced name');
+// }
 
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
@@ -137,7 +169,7 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
-  editItemName();
+  handleRenameStart();
 }
 
 // when the page loads, call `handleShoppingList`
