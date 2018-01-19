@@ -9,18 +9,59 @@
 // indicates if it's checked off or not.
 // we're pre-adding items to the shopping list so there's
 // something to see when the page first loads.
-const STORE = [
-  {name: "apples", checked: false},
-  {name: "oranges", checked: false},
-  {name: "milk", checked: true},
-  {name: "bread", checked: false}
+const STORE = [{
+    name: "apples",
+    checked: true
+  },
+  {
+    name: "oranges",
+    checked: false
+  },
+  {
+    name: "milk",
+    checked: true
+  },
+  {
+    name: "bread",
+    checked: false
+  }
 ];
 
 
 function renderShoppingList() {
   // this function will be repsonsible for rendering the shopping list in
   // the DOM
-  console.log('`renderShoppingList` ran');
+  const itemLists = STORE.map((item, index) => {
+    return generateItem(item, index);
+  });
+  $('ul.shopping-list').html(itemLists);
+}
+
+
+
+/**
+ * 
+ * @param {object} item 
+ * @param {number} index 
+ * @return {string} html
+ */
+function generateItem(item, index) {
+  //Get item from STORE
+  //Generate <li>
+  const itemClassCheck = item.checked ? 'shopping-item__checked' : '';
+  const newItem = item.name;
+  return `
+    <li data-index = '${index}'>
+      <span class="shopping-item ${itemClassCheck}">${newItem}</span>
+        <div class="shopping-item-controls">
+          <button class="shopping-item-toggle">
+            <span class="button-label">check</span>
+          </button>
+          <button class="shopping-item-delete">
+          <span class="button-label">delete</span>
+        </button>
+      </div>
+    </li>`
 }
 
 
