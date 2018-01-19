@@ -44,6 +44,9 @@ function renderShoppingList() {
   });
   $('ul.shopping-list').html(itemLists);
   console.log('render');
+  handleRenameStart();
+  handleRenameSubmit();
+  handleRenameCancel();
 }
 /**
  * 
@@ -55,16 +58,15 @@ function generateItem(item, index) {
   //Get item from STORE
   //Generate <li>
   const newTemp = generateDynamicHtml(item);
-  let hidden = '';
-  if(STORE.hiddenSwitch && item.checked){
-    hidden = 'hidden';
-  }
   return (
-    `<li id='${index}' ${hidden}>
+    `<li id='${index}'>
           ${newTemp}
         <div class="shopping-item-controls">
           <button class="shopping-item-toggle">
             <span class="button-label">check</span>
+          </button>
+          <button class="shopping-item-edit">
+            <span class="button-label">edit</span>
           </button>
           <button class="shopping-item-delete">
           <span class="button-label">delete</span>
@@ -86,7 +88,7 @@ function generateDynamicHtml(item) {
     return ` <form id = "formNewName">
     <input id = "newName" placeholder = "Rename item" autofocus></input>
     <button type="submit">Ok</button>
-    <button type="button">Cancel</button>
+    <button type="button" id ="cancel">Cancel</button>
     </form>`;
   }
   return `<span class="shopping-item ${itemClassCheck}">${newItem}</span>`;
@@ -138,12 +140,11 @@ function handleDeleteItemClicked() {
 }
 
 function handleRenameStart() {
-  $('.shopping-item').on('click', e => {
+  $('.shopping-item-edit').on('click', e => {
     const myId = $(e.target).closest('li').attr('id');
-    console.log(myId);
     STORE.items[myId].isEditing = true;
     renderShoppingList();
-    handleRenameSubmit();
+    //handleRenameSubmit();
   });
 }
 
@@ -158,25 +159,31 @@ function handleRenameSubmit() {
     STORE.items[myId].name = newItemName;
     STORE.items[myId].isEditing = false;
     renderShoppingList();
+    console.log('called handle rename submit');
   });
+  
+  
 }
 
-function handleToggleFilter(){
-  $('.switch').on('click','input[type=checkbox]', e =>{
-    STORE.hiddenSwitch = !STORE.hiddenSwitch;
+function handleRenameCancel() {
+  $('#formNewName').on('click', '#cancel', e => {
+    const myId = $(event.target).closest('li').attr('id');
+    STORE.items[myId].isEditing = false;
     renderShoppingList();
   });
-  console.log('handle toggle');
+  
 }
-
+// this function will be our callback when the page loads. it's responsible for
+// initially rendering the shopping list, and activating our individual functions
+// that handle new item submission and user clicks on the "check" and "delete" buttons
+// for individual shopping list items.
 function handleShoppingList() {
   renderShoppingList();
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleRenameStart();
-  handleRenameSubmit();
-  handleToggleFilter();
+  handleRenameCancel();
 }
 
 // when the page loads, call `handleShoppingList`
