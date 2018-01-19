@@ -105,6 +105,31 @@ $('ul.js-shopping-list').on('click', '.shopping-item-delete', e => {
   console.log('handle delete');
 }
 
+function editItemName () {
+  // listen for click <span class="shopping-item">apples</span>
+
+  const editText = $('<input id = "newName" placeholder = "Rename item"></input>');
+  $('.shopping-item').on('click', e => {
+    $(e.currentTarget).replaceWith(editText);
+    $('#newName').keydown( e => {
+      if (e.keyCode === 13) {
+        replaceItemName();
+      }
+    })
+    console.log('edited name');
+  })
+}
+
+function replaceItemName () {
+  //grab new name
+  //change back to span
+  //replace name in object
+  //refresh
+  const newItemName = $('#newName').val();
+  $('#newName').replaceWith(`<span class="shopping-item">${newItemName}</span>`);
+  console.log('replaced name');
+}
+
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
@@ -114,6 +139,7 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
+  editItemName();
 }
 
 // when the page loads, call `handleShoppingList`
